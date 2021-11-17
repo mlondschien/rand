@@ -1,0 +1,57 @@
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+name: CI
+
+jobs:
+  R-CMD-check:
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+         R: ['4.1.1', 'release']
+    
+    name: R CMD check (${{ matrix.R }})
+    steps:
+      - uses: actions/checkout@v2
+      - uses: r-lib/actions/setup-pandoc@v1
+      - uses: r-lib/actions/setup-r@v1
+        with:
+          r-version: ${{ matrix.R }}
+          use-public-rspm: true
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 'stable'
+      - name: Install rextendr
+        run: |
+          install.packages("rextendr", repos="http://cran.us.r-project.org")
+          install.packages("testthat", repos="http://cran.us.r-project.org")
+        shell: Rscript {0}
+      - name: Run R CMD check
+        run: |
+          R CMD build .
+          _R_CHECK_CRAN_INCOMING_=false R CMD check --as-cran --no-vignettes --no-manual randr_*.tar.gz
+          CHECK_LOG_FILE=randr.Rcheck/00check.log
+          CHECK_INSTALL_FILE=randr.Rcheck/00install.out
+          if ! [[ -f "$CHECK_LOG_FILE" ]]; then
+            echo "Log-file not found."
+            exit 1
+          fi
+          if cat $CHECK_LOG_FILE | grep -q "ERROR"; then
+            cat $CHECK_INSTALL_FILE
+            cat $CHECK_LOG_FILE
+            exit 1
+          fi
+          if cat $CHECK_LOG_FILE | grep -q "WARNING"; then
+            echo "Found warnings, treated as errors."
+            cat $CHECK_LOG_FILE
+            exit 1
+          fi
+        # e: pipefail
+        # x: print commands
+        # u: unset variables are errors
+        # l: as login script
+        shell: bash -lxu {0}

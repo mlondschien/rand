@@ -1,0 +1,17 @@
+Package: randr
+Type: Package
+Title: Random number generation
+Version: 0.1.0
+Author: Malte Londschien
+Maintainer: Malte Londschien <malte@londschien.ch>
+Description: Random number generation
+License: GNU GPL3
+URL: https://github.com/mlondschien/rand
+BugReports: https://github.com/mlondschien/rand
+SystemRequirements: Rust tool chain w/ cargo, libclang/llvm-config
+Encoding: UTF-8
+RoxygenNote: 7.1.2
+Suggests:
+    testthat (>= 3.0.0)
+Language: en-US
+Config/testthat/edition: 3
