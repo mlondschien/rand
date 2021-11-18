@@ -32,12 +32,25 @@ jobs:
         shell: Rscript {0}
       - name: Run R CMD check
         run: |
+          cargo build --lib --release --manifest-path=./rust/Cargo.toml --target-dir ./rust/target
           R CMD build .
           _R_CHECK_CRAN_INCOMING_=false R CMD check --as-cran --no-vignettes --no-manual rand_*.tar.gz
-          CHECK_INSTALL_FILE=rand.Rcheck/00install.out
-          CHECK_LOG_FILE=rand.Rcheck/00check.log
-          cat $CHECK_INSTALL_FILE
-          cat $CHECK_LOG_FILE
+          CHECK_LOG_FILE=randr.Rcheck/00check.log
+          CHECK_INSTALL_FILE=randr.Rcheck/00install.out
+          if ! [[ -f "$CHECK_LOG_FILE" ]]; then
+            echo "Log-file not found."
+            exit 1
+          fi
+          if cat $CHECK_LOG_FILE | grep -q "ERROR"; then
+            cat $CHECK_INSTALL_FILE
+            cat $CHECK_LOG_FILE
+            exit 1
+          fi
+          if cat $CHECK_LOG_FILE | grep -q "WARNING"; then
+            echo "Found warnings, treated as errors."
+            cat $CHECK_LOG_FILE
+            exit 1
+          fi
         # e: pipefail
         # x: print commands
         # u: unset variables are errors
