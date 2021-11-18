@@ -1,2 +1,2 @@
-randr.Rcheck/
+*.Rcheck/
 *.tar.gz
