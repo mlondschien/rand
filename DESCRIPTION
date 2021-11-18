@@ -1,4 +1,4 @@
-Package: randr
+Package: rand
 Type: Package
 Title: Random number generation
 Version: 0.1.0

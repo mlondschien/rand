@@ -1,4 +1,4 @@
-library(randr)
+library(rand)
 library(testthat)
 
-test_check("randr")
+test_check("rand")

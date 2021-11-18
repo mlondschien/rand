@@ -25,17 +25,14 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: 'stable'
-      - name: Install rextendr
-        run: |
-          install.packages("rextendr", repos="http://cran.us.r-project.org")
-          install.packages("testthat", repos="http://cran.us.r-project.org")
-        shell: Rscript {0}
+      - uses: r-lib/actions/setup-r-dependencies@v1
       - name: Run R CMD check
         run: |
+          cargo build --lib --release --manifest-path=./rust/Cargo.toml --target-dir ./rust/target
           R CMD build .
-          _R_CHECK_CRAN_INCOMING_=false R CMD check --as-cran --no-vignettes --no-manual randr_*.tar.gz
-          CHECK_LOG_FILE=randr.Rcheck/00check.log
-          CHECK_INSTALL_FILE=randr.Rcheck/00install.out
+          _R_CHECK_CRAN_INCOMING_=false R CMD check --as-cran --no-vignettes --no-manual rand_*.tar.gz
+          CHECK_LOG_FILE=rand.Rcheck/00check.log
+          CHECK_INSTALL_FILE=rand.Rcheck/00install.out
           if ! [[ -f "$CHECK_LOG_FILE" ]]; then
             echo "Log-file not found."
             exit 1
