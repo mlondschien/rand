@@ -27,7 +27,6 @@ jobs:
           toolchain: 'stable'
       - name: Install rextendr
         run: |
-          install.packages("rextendr", repos="http://cran.us.r-project.org")
           install.packages("testthat", repos="http://cran.us.r-project.org")
         shell: Rscript {0}
       - name: Run R CMD check
