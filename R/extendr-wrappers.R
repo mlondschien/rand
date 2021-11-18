@@ -10,5 +10,5 @@ NULL
 
 #' Return random number between -2147483648 and 2147483647.
 #' @export
-rand <- function() .Call(wrap__rand)
+rand <- function() .Call("wrap__rand", PACKAGE="rand")
 
